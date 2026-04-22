@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>feey Creator Briefing — Zimmerpflanzen</title>
+<link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Karla', sans-serif; background: #141414; }
+
+/* Slide container */
+.presentation { width: 100vw; height: 100vh; position: relative; }
+.slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.45s ease; overflow: hidden; }
+.slide.active { opacity: 1; pointer-events: auto; z-index: 2; }
+.slide-inner { flex: 1; width: 100%; max-width: 100%; display: flex; flex-direction: column; position: relative; padding: 3.5vw 4.5vw 2.2vw; overflow-y: auto; }
+
+/* Color themes */
+.slide.dark { background: #141414; color: #fff; }
+.slide.light { background: #F5F0E8; color: #1a1a1a; }
+
+/* Typography */
+.label { font-family: 'Poppins', sans-serif; font-size: clamp(10px, 1vw, 14px); font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #4ECFA5; margin-bottom: 0.4em; }
+.heading { font-family: 'Poppins', sans-serif; font-size: clamp(28px, 3.8vw, 64px); font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1.05; margin-bottom: 0.35em; }
+.heading-condensed { font-stretch: condensed; }
+.subheading { font-family: 'Poppins', sans-serif; font-size: clamp(14px, 1.5vw, 22px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.6em; color: #4ECFA5; }
+.body-text { font-size: clamp(12px, 1.1vw, 17px); line-height: 1.6; max-width: 64ch; }
+.body-text + .body-text { margin-top: 0.6em; }
+.small-text { font-size: clamp(10px, 0.85vw, 13px); line-height: 1.5; opacity: 0.7; }
+
+/* Accent bar at bottom — color varies per slide */
+.accent-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; z-index: 10; }
+.accent-bar.green { background: rgb(96,191,164); }
+.accent-bar.red { background: rgb(238,119,116); }
+.accent-bar.yellow { background: rgb(250,206,68); }
+
+/* feey logo */
+.feey-logo { position: absolute; bottom: 5vw; right: 4.5vw; z-index: 10; height: clamp(24px, 2.4vw, 40px); }
+.feey-logo img { height: 100%; width: auto; }
+
+/* CONFIDENTIAL */
+.confidential { position: absolute; top: 1.5vw; right: 4.5vw; font-size: clamp(8px, 0.7vw, 11px); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.45; z-index: 10; }
+
+/* Two-column layout */
+.two-col { display: flex; gap: 3vw; flex: 1; min-height: 0; }
+.two-col .col { flex: 1; min-width: 0; }
+
+/* Lists */
+.spec-list, .idea-list { list-style: none; padding: 0; margin: 0.4em 0; }
+.spec-list li, .idea-list li { font-size: clamp(11px, 1vw, 15px); line-height: 1.55; padding: 0.2em 0; padding-left: 1.4em; position: relative; }
+.spec-list li::before { content: "—"; position: absolute; left: 0; color: #4ECFA5; font-weight: 700; }
+.idea-list li::before { content: "\2192"; position: absolute; left: 0; color: #4ECFA5; font-weight: 700; }
+
+.check-list { list-style: none; padding: 0; margin: 0.4em 0; }
+.check-list li { font-size: clamp(11px, 1vw, 15px); line-height: 1.55; padding: 0.25em 0; padding-left: 1.6em; position: relative; }
+.check-list.do li::before { content: "\2713"; position: absolute; left: 0; color: #4ECFA5; font-weight: 700; }
+.check-list.dont li::before { content: "\2715"; position: absolute; left: 0; color: #E85D5D; font-weight: 700; }
+
+.bullet-list { list-style: none; padding: 0; margin: 0.4em 0; }
+.bullet-list li { font-size: clamp(11px, 1vw, 15px); line-height: 1.55; padding: 0.25em 0 0.25em 1.4em; position: relative; }
+.bullet-list li::before { content: "\2022"; position: absolute; left: 0; color: #4ECFA5; font-weight: 700; }
+
+/* Green / Red section headings */
+.section-green { font-family: 'Poppins', sans-serif; font-size: clamp(13px, 1.2vw, 18px); font-weight: 700; text-transform: uppercase; color: #4ECFA5; margin: 1em 0 0.3em; letter-spacing: 0.04em; }
+.section-red { font-family: 'Poppins', sans-serif; font-size: clamp(13px, 1.2vw, 18px); font-weight: 700; text-transform: uppercase; color: #E85D5D; margin: 1em 0 0.3em; letter-spacing: 0.04em; }
+
+/* Key facts */
+.key-fact { margin-bottom: 0.7em; }
+.key-fact .kf-label { font-family: 'Poppins', sans-serif; font-size: clamp(10px, 0.85vw, 12px); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4ECFA5; }
+.key-fact .kf-value { font-size: clamp(13px, 1.1vw, 17px); font-weight: 500; line-height: 1.4; }
+
+/* Callout box */
+.callout { background: rgb(230,244,240); padding: 1.2em 2em; margin-top: 1.5em; border-radius: 6px; font-size: clamp(11px, 0.95vw, 14px); line-height: 1.6; color: rgb(99,93,75); width: 100%; max-width: 87.5%; }
+
+/* Reference image placeholders */
+.ref-grid { display: flex; flex-direction: column; gap: 1vw; }
+.ref-box { background: #e0dbd2; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: clamp(10px, 0.9vw, 13px); font-weight: 600; letter-spacing: 0.05em; aspect-ratio: 4/5; max-height: 28vh; overflow: hidden; }
+.ref-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+.ref-row { display: flex; gap: 1vw; }
+.ref-row .ref-box { flex: 1; }
+.ref-source { font-size: clamp(9px, 0.7vw, 11px); opacity: 0.5; text-align: right; margin-top: 0.4em; }
+
+/* Phone video frame */
+.phone-frame { width: clamp(160px, 16vw, 260px); aspect-ratio: 9/16; background: #222; border-radius: 20px; overflow: hidden; position: relative; flex-shrink: 0; align-self: center; box-shadow: 0 4px 24px rgba(0,0,0,0.15); }
+.phone-frame video { width: 100%; height: 100%; object-fit: cover; }
+.video-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #2a2a2a; color: #888; text-align: center; padding: 1em; }
+.video-placeholder .play-icon { font-size: 36px; margin-bottom: 0.5em; opacity: 0.4; }
+.video-placeholder .vp-text { font-size: clamp(9px, 0.8vw, 12px); line-height: 1.4; }
+
+/* Talking points */
+.talk-list { list-style: none; padding: 0; margin: 0.5em 0; }
+.talk-list li { font-size: clamp(11px, 0.95vw, 14px); line-height: 1.55; padding: 0.3em 0 0.3em 1.8em; position: relative; font-style: italic; }
+.talk-list li::before { content: "\1F4AC"; position: absolute; left: 0; font-style: normal; }
+
+/* Navigation arrows */
+.nav-arrow { position: fixed; top: 50%; transform: translateY(-50%); z-index: 100; background: rgba(78,207,165,0.15); border: none; color: #4ECFA5; font-size: 28px; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; backdrop-filter: blur(4px); }
+.nav-arrow:hover { background: rgba(78,207,165,0.35); }
+.nav-arrow.prev { left: 1.2vw; }
+.nav-arrow.next { right: 1.2vw; }
+
+/* Slide counter */
+.slide-counter { position: fixed; bottom: 1.2vw; left: 50%; transform: translateX(-50%); font-size: clamp(10px, 0.9vw, 13px); font-weight: 600; color: #888; z-index: 100; letter-spacing: 0.08em; }
+
+/* Progress bar */
+.progress-bar { position: fixed; bottom: 0; left: 0; height: 3px; background: #4ECFA5; z-index: 200; transition: width 0.4s ease; }
+
+/* Cover slide specifics */
+.cover-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.cover-bg img { width: 100%; height: 100%; object-fit: cover; }
+.cover-content { position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: center; padding: 6vw 5vw; height: 100%; max-width: 55%; }
+.cover-content .label { font-size: clamp(11px, 1.1vw, 16px); margin-bottom: 0.8em; }
+.cover-content .heading { font-size: clamp(36px, 5.5vw, 90px); margin-bottom: 0.3em; }
+.cover-content .subtitle { font-size: clamp(14px, 1.4vw, 22px); line-height: 1.6; opacity: 0.85; max-width: 40ch; }
+
+/* Divider slide */
+.divider-content { display: flex; align-items: center; justify-content: center; height: 100%; text-align: center; }
+.divider-content .heading { font-size: clamp(32px, 5vw, 80px); letter-spacing: 0.08em; }
+
+/* Scrollable slide inner for dense content */
+.slide-inner.scrollable { overflow-y: auto; }
+.slide-inner.scrollable::-webkit-scrollbar { width: 4px; }
+.slide-inner.scrollable::-webkit-scrollbar-thumb { background: rgba(78,207,165,0.3); border-radius: 2px; }
+
+/* Content sections spacing */
+.content-section { margin-bottom: 1em; }
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .two-col { flex-direction: column; gap: 1.5em; }
+  .slide-inner { padding: 4vw 5vw 3vw; }
+  .cover-content { max-width: 80%; }
+  .phone-frame { width: clamp(120px, 30vw, 200px); align-self: center; }
+  .ref-row { flex-direction: column; }
+}
+@media (max-width: 600px) {
+  .nav-arrow { width: 36px; height: 36px; font-size: 20px; }
+  .slide-inner { padding: 5vw 6vw 4vw; }
+}
+</style>
+</head>
+<body>
+
+<div class="presentation" id="presentation">
+
+<!-- SLIDE 1 — Cover -->
+<div class="slide dark active" data-slide="1">
+  <div class="cover-bg">
+    <img src="01%20%E2%80%94%20Cover.png" alt="feey Creator Briefing Zimmerpflanzen">
+  </div>
+  <div class="accent-bar green"></div>
+</div>
+
+<!-- SLIDE 2 — Über feey -->
+<div class="slide light" data-slide="2">
+  <div class="slide-inner scrollable">
+    <div class="two-col">
+      <div class="col">
+        <div class="label">Über feey</div>
+        <h2 class="heading" style="font-size:clamp(24px,3vw,48px);">Pflanzen für alle Daumenfarben.</h2>
+        <p class="body-text">feey ist die Schweizer Pflanzenmarke, die Zimmerpflanzen für alle zugänglich macht — egal ob grüner Daumen oder notorischer Pflanzenkiller. Wir liefern gesunde, frisch umgetopfte Pflanzen direkt an die Haustür, inklusive einfacher Pflegeanleitung. Unser Ziel: Jedes Zuhause ein bisschen lebendiger machen.</p>
+      </div>
+      <div class="col">
+        <div class="key-fact"><div class="kf-label">Gründung</div><div class="kf-value">2019</div></div>
+        <div class="key-fact"><div class="kf-label">Sitz</div><div class="kf-value">St. Gallen, Schweiz</div></div>
+        <div class="key-fact"><div class="kf-label">Community</div><div class="kf-value">45'000+ Pflanzeneltern</div></div>
+        <div class="key-fact"><div class="kf-label">Produkte</div><div class="kf-value">Zimmerpflanzen, Blumen, Pflege & Zubehör</div></div>
+        <div class="key-fact"><div class="kf-label">Tonalität</div><div class="kf-value">Warm, humorvoll, auf Augenhöhe</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar green"></div>
+</div>
+
+<!-- SLIDE 3 — Agreement -->
+<div class="slide light" data-slide="3">
+  <div class="slide-inner scrollable">
+    <h2 class="heading" style="font-size:clamp(28px,3.5vw,56px);">Agreement</h2>
+    <div class="content-section">
+      <div class="section-green">Content</div>
+      <p class="body-text">Bitte erstelle 3 einzigartige Fotos und 4 Videos.</p>
+    </div>
+    <div class="content-section">
+      <div class="section-green">Deadline</div>
+      <p class="body-text">Innerhalb von 1 Woche nach Erhalt deiner Pflanzen.</p>
+    </div>
+    <div class="content-section">
+      <div class="section-green">Details</div>
+      <ul class="bullet-list">
+        <li>Fotos & Videos müssen von feey freigegeben werden.</li>
+        <li>feey hat das Recht auf mindestens eine Feedback-Runde und ggf. einen Reshoot (max. 1 pro Foto/Video).</li>
+        <li>Buyout: feey erhält vollständige digitale Nutzungsrechte an allen freigegebenen Inhalten. Das umfasst: Paid Ads, organisches Reposting, Whitelisted Ads über dein Profil und Veröffentlichung auf feey.ch.</li>
+        <li>Die vereinbarte Vergütung beinhaltet diese Buyout-Rechte.</li>
+        <li>Als feey Creator*in repräsentierst du die Marke positiv und teilst keine negativen Kommentare über feey oder unsere Produkte öffentlich oder mit Dritten.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar green"></div>
+</div>
+
+<!-- SLIDE 4 — Do's & Don'ts -->
+<div class="slide light" data-slide="4">
+  <div class="slide-inner scrollable">
+    <div class="two-col">
+      <div class="col">
+        <h2 class="heading" style="font-size:clamp(24px,3vw,48px); color:#4ECFA5;">Do's</h2>
+        <ul class="check-list do">
+          <li>Warmes, natürliches Licht — Golden Hour oder helles Tageslicht. Keine Blitzlichter.</li>
+          <li>Echte Wohnung, echtes Zuhause — europäischer Wohnstil mit Holzböden, weissen Wänden, warmen Materialien.</li>
+          <li>Pflanze ist der Hero — sie muss prominent, gesund und schön im Bild sein.</li>
+          <li>Zeig Persönlichkeit — Tattoos, Schmuck, farbige Haare, individueller Style sind willkommen und erwünscht.</li>
+          <li>feey Topf immer sichtbar — die Pflanze kommt im feey Topf. Der Topf muss erkennbar sein.</li>
+          <li>Menschliche Spuren im Bild — ein Buch, eine Kaffeetasse, ein Haustier. Das Zuhause soll gelebt wirken.</li>
+          <li>Kleidung: warme Erdtöne (Olive, Sand, Schwarz, Creme) oder dein eigener Style.</li>
+          <li>Format: Vertikal 9:16 für Videos, 4:5 und 9:16 für Fotos.</li>
+          <li>Zeig echte Emotionen — Freude, Staunen, Stolz. Keine gestellten Model-Posen.</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h2 class="heading" style="font-size:clamp(24px,3vw,48px); color:#E85D5D;">Don'ts</h2>
+        <ul class="check-list dont">
+          <li>Unscharfe oder pixelige Bilder — Qualität muss hoch sein.</li>
+          <li>Andere Pflanzenmarken oder Töpfe im Bild — nur feey Produkte.</li>
+          <li>Kalte, sterile Umgebungen — kein Büro-Look, keine klinische Ästhetik.</li>
+          <li>Überstylte Influencer-Shelfies mit 20 Accessoires — weniger ist mehr.</li>
+          <li>Pflanzen die krank, gelb oder gestresst aussehen — die Pflanze muss strahlen.</li>
+          <li>Generische Stock-Foto-Posen — Lächeln in die Kamera vor einer Pflanze.</li>
+          <li>Dunkle, dramatische Beleuchtung — feey ist warm und sonnig.</li>
+          <li>Sichtbare Logos oder Markennamen auf Kleidung.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar red"></div>
+</div>
+
+<!-- SLIDE 5 — Creator Guidelines: Appearance -->
+<div class="slide light" data-slide="5">
+  <div class="slide-inner scrollable">
+    <h2 class="heading" style="font-size:clamp(22px,2.6vw,42px);">Creator's Guidelines</h2>
+    <div class="subheading">Du & Dein Style</div>
+    <div class="two-col">
+      <div class="col">
+        <div class="section-green">Was wir lieben:</div>
+        <ul class="idea-list">
+          <li>Sei du selbst. Dein individueller Style macht den Content einzigartig und echt.</li>
+          <li>Tattoos, Piercings, farbige Haare, Schmuck — alles willkommen. feey feiert Individualität.</li>
+          <li>Natürliches Aussehen: Kein perfektes Styling nötig. So wie du zu Hause aussiehst, ist perfekt.</li>
+          <li>Kleidung in warmen Erdtönen (Olive, Sand, Creme, Schwarz) funktioniert am besten mit Pflanzen.</li>
+          <li>Barfuss, gemütliche Socken, entspannte Vibes — dein Zuhause, deine Regeln.</li>
+          <li>Hände sind wichtig: Wenn du die Pflanze hältst, umtopfst oder berührst, zeig deine Hände natürlich.</li>
+        </ul>
+      </div>
+      <div class="col">
+        <div class="section-red">Bitte nicht:</div>
+        <ul class="check-list dont">
+          <li>Overdressed oder Business-Casual — keine Blazer, keine Büro-Outfits.</li>
+          <li>Kleidung mit sichtbaren Logos oder Markennamen.</li>
+          <li>Komplett schwarze Outfits — zu düster für den warmen feey Look.</li>
+          <li>Perfektionistisch gestylte Influencer-Ästhetik — wir wollen echt, nicht inszeniert.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>&#128161; Der Unterschied zu anderen Briefings:</strong> Wir wollen keine austauschbaren, klinisch cleanen Bilder. feey lebt von echten Menschen mit echtem Style in echten Wohnungen. Deine Persönlichkeit ist unser USP.
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar yellow"></div>
+</div>
+
+<!-- SLIDE 6 — Creator Guidelines: Setting -->
+<div class="slide light" data-slide="6">
+  <div class="slide-inner scrollable">
+    <h2 class="heading" style="font-size:clamp(22px,2.6vw,42px);">Creator's Guidelines</h2>
+    <div class="subheading">Setting & Umgebung</div>
+    <div class="two-col">
+      <div class="col">
+        <div class="section-green">Das perfekte Setting:</div>
+        <ul class="idea-list">
+          <li>Europäische Wohnung mit Charakter — weisse Wände, Holzböden, Stuck, Vintage-Möbel gemischt mit modernen Stücken.</li>
+          <li>Warmes Licht: Golden Hour oder helles Morgenlicht von grossen Fenstern. Nie flach oder bewölkt.</li>
+          <li>Die Pflanze im feey Topf steht prominent — nicht versteckt in einer Ecke.</li>
+          <li>Menschliche Spuren: Ein aufgeschlagenes Buch, eine Kaffeetasse, ein Laptop, verstreute Blütenblätter — jemand lebt hier.</li>
+          <li>Gemütliche Atmosphäre: Sofa, Holztisch, Regal, Fensterbrett — Orte wo Pflanzen natürlich stehen.</li>
+          <li>Sauber aber nicht steril — aufgeräumt, aber mit Leben.</li>
+        </ul>
+      </div>
+      <div class="col">
+        <div class="section-red">Das passt nicht:</div>
+        <ul class="check-list dont">
+          <li>Generische, weisse Studio-Settings ohne Kontext.</li>
+          <li>Überfüllte Räume mit vielen ablenkenden Objekten.</li>
+          <li>Büros, Garagen oder unpassende Räume.</li>
+          <li>Fluoreszierendes oder kaltes Kunstlicht.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>Mood Keywords:</strong> warm · sonnig · gemütlich · gelebt · natürlich · einladend · europäisch · hell<br><br>
+      Denk an: Sonntagmorgen, Kaffee auf dem Tisch, die Sonne scheint rein — und deine Pflanze steht mittendrin.
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar green"></div>
+</div>
+
+<!-- SLIDE 7 — Content Deliverables Divider -->
+<div class="slide dark" data-slide="7" style="position:relative;">
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:url('Bilder%20f%C3%BCr%20Affiliate%20Partner%20Kampagnen_72.jpg') center/cover no-repeat;"></div>
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(20,20,20,0.45);"></div>
+  <div class="slide-inner" style="position:relative;z-index:2;">
+    <div class="divider-content">
+      <div>
+        <div class="label" style="text-align:center; margin-bottom:0.6em; font-size:clamp(10px,1vw,14px);">Was wir brauchen</div>
+        <h2 class="heading" style="font-size:clamp(32px,5vw,80px); letter-spacing:0.06em; text-align:center;">Content<br>Deliverables</h2>
+        <p class="body-text" style="text-align:center; opacity:0.7; margin:0 auto;">3 Fotos &middot; 4 Videos</p>
+      </div>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug_neg.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar green"></div>
+</div>
+
+<!-- SLIDE 8 — Foto 1 -->
+<div class="slide light" data-slide="8">
+  <div class="slide-inner scrollable">
+    <div class="two-col">
+      <div class="col" style="flex:1.3;">
+        <h2 class="heading" style="font-size:clamp(28px,3.5vw,56px);">Foto 1</h2>
+        <div class="subheading">Lifestyle — Du mit deiner Pflanze</div>
+        <p class="body-text">Du hältst oder interagierst mit der Pflanze im feey Topf. Torso und Hände im Bild, Gesicht optional. Die Pflanze ist der Star, aber deine Hände geben ihr Leben. Wie die feey «Action Shots» — die Pflanze wird von echten Händen gehalten.</p>
+        <div class="section-green" style="margin-top:1em;">Spezifikationen</div>
+        <ul class="spec-list">
+          <li>Natürliches Tageslicht, weich und warm</li>
+          <li>Hintergrund: warmes Beige, weisse Wand oder dein echtes Zuhause</li>
+          <li>feey Topf muss sichtbar und erkennbar sein</li>
+          <li>Format: 4:5 oder 9:16</li>
+          <li>Kein Makeup nötig, natürlicher Look</li>
+        </ul>
+        <div class="section-green">Ideen & Inspiration</div>
+        <ul class="idea-list">
+          <li>Du hältst die Pflanze auf Brusthöhe, Blick nach unten auf die Pflanze</li>
+          <li>Du stellst die Pflanze auf ein Regal und rückst sie zurecht</li>
+          <li>Du hebst die Pflanze aus der feey Verpackung — der «frisch angekommen»-Moment</li>
+          <li>Nahaufnahme deiner Hände, die den feey Topf umfassen</li>
+        </ul>
+      </div>
+      <div class="col" style="display:flex; flex-direction:column; justify-content:center;">
+        <div class="ref-grid">
+          <div class="ref-row">
+            <div class="ref-box"><img src="Inst_%20darilukma.jpeg" alt="Frau hält Pflanze"></div>
+            <div class="ref-box"><img src="_%20(39).jpeg" alt="Torso mit Pflanze im Topf"></div>
+          </div>
+          <div class="ref-row">
+            <div class="ref-box"><img src="_%20(40).jpeg" alt="Frau giesst Pflanzen"></div>
+            <div class="ref-box"><img src="_%F0%9D%9F%91.jpeg" alt="Frau trägt Monstera"></div>
+          </div>
+        </div>
+        <div class="ref-source">Bildquelle: Pinterest / Instagram</div>
+      </div>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar green"></div>
+</div>
+
+<!-- SLIDE 9 — Foto 2 -->
+<div class="slide light" data-slide="9">
+  <div class="slide-inner scrollable">
+    <div class="two-col">
+      <div class="col" style="flex:1.3;">
+        <h2 class="heading" style="font-size:clamp(28px,3.5vw,56px);">Foto 2</h2>
+        <div class="subheading">Detail — Pflanze im Fokus</div>
+        <p class="body-text">Nahaufnahme der Pflanze selbst: Blattstruktur, Muster, Farben, Texturen. Die botanische Schönheit im Zentrum. Zeig, warum diese Pflanze besonders ist — als wäre es ein Kunstwerk der Natur.</p>
+        <div class="section-green" style="margin-top:1em;">Spezifikationen</div>
+        <ul class="spec-list">
+          <li>Natürliches Licht, weicher Fokus im Hintergrund</li>
+          <li>Pflanze im feey Topf, clean aufgestellt</li>
+          <li>Format: 4:5 oder 9:16</li>
+          <li>Scharfes Detail auf Blättern/Struktur</li>
+        </ul>
+        <div class="section-green">Ideen & Inspiration</div>
+        <ul class="idea-list">
+          <li>Macro-Shot eines Blatts mit sichtbarer Textur und Adern</li>
+          <li>Pflanze von oben fotografiert — Top-Down auf die Blätter</li>
+          <li>Pflanze auf dem Fensterbrett mit Lichtspiel durch die Blätter</li>
+          <li>Neue Triebe oder Knospen als Symbol für Wachstum</li>
+        </ul>
+      </div>
+      <div class="col" style="display:flex; flex-direction:column; justify-content:center;">
+        <div class="ref-grid">
+          <div class="ref-row">
+            <div class="ref-box"><img src="Strelitzie%20(P0401S)%20details3.jpg" alt="Strelitzia Blatt Detail"></div>
+            <div class="ref-box"><img src="MonsteraohneSchlitzeundLoecherWohnzimmerdetail1_1800x1800.jpg" alt="Monstera neuer Trieb"></div>
+          </div>
+          <div class="ref-row">
+            <div class="ref-box"><img src="_%20(42).jpeg" alt="Frau berührt Pflanze"></div>
+            <div class="ref-box"><img src="Well-Spent%20Wednesday%21%20%F0%9F%8C%B1%F0%9F%9B%92__The%20more%20you%20buy%2C%20the%20more%20you%20save%21%20Today%20you%20can%20enjoy%20stacking%20discounts%20up%20to%2020%25%20off_%20%E2%9C%A8__%E2%9C%94%EF%B8%8F%2010%25%20off%20one%20item_%E2%9C%94%EF%B8%8F%2015%25%20off%20two%20items_%E2%9C%94%EF%B8%8F%2020%25%20off%20three%20or%20more%20___%20Only%20valid%20today%2C%20while%20stock.jpeg" alt="Pilea umtopfen"></div>
+          </div>
+        </div>
+        <div class="ref-source">Bildquelle: feey / Pinterest</div>
+      </div>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar yellow"></div>
+</div>
+
+<!-- SLIDE 10 — Foto 3 -->
+<div class="slide light" data-slide="10">
+  <div class="slide-inner scrollable">
+    <div class="two-col">
+      <div class="col" style="flex:1.3;">
+        <h2 class="heading" style="font-size:clamp(28px,3.5vw,56px);">Foto 3</h2>
+        <div class="subheading">Interior — Pflanze in deinem Zuhause</div>
+        <p class="body-text">Die Pflanze in deinem echten Wohnraum, ohne Person im Bild. Das Licht ist der Hero. Warme Schatten an der Wand. Die Szene fühlt sich an, als wäre gerade jemand aus dem Bild getreten. Genau der feey «Interior/Lifestyle»-Modus.</p>
+        <div class="section-green" style="margin-top:1em;">Spezifikationen</div>
+        <ul class="spec-list">
+          <li>Golden Hour oder helles Morgenlicht</li>
+          <li>Pflanze im feey Topf, prominent platziert</li>
+          <li>Format: 4:5 oder 9:16</li>
+          <li>Umgebung: Wohnzimmer, Essbereich oder Schlafzimmer</li>
+        </ul>
+        <div class="section-green">Ideen & Inspiration</div>
+        <ul class="idea-list">
+          <li>Pflanze auf einem Holztisch neben einem aufgeschlagenen Buch und Kaffee</li>
+          <li>Pflanze auf einem Regal zwischen persönlichen Gegenständen</li>
+          <li>Pflanze auf dem Fensterbrett — Sonnenlicht streift durch die Blätter</li>
+          <li>Mehrere feey Pflanzen zusammen arrangiert — ein kleiner «Urban Jungle»-Moment</li>
+        </ul>
+      </div>
+      <div class="col" style="display:flex; flex-direction:column; justify-content:center;">
+        <div class="ref-grid">
+          <div class="ref-row">
+            <div class="ref-box"><img src="_%20(35).jpeg" alt="Strelitzia im Wohnzimmer mit USM"></div>
+            <div class="ref-box"><img src="_%20(36).jpeg" alt="Strelitzia neben Sofa, Sonnenlicht"></div>
+          </div>
+          <div class="ref-row">
+            <div class="ref-box"><img src="_%20(41).jpeg" alt="Frau liest auf Sofa mit Pflanze"></div>
+            <div class="ref-box"><img src="_%20(43).jpeg" alt="Frau liegt zwischen Pflanzen"></div>
+          </div>
+        </div>
+        <div class="ref-source">Bildquelle: Pinterest / Instagram</div>
+      </div>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar green"></div>
+</div>
+
+<!-- SLIDE 11 — Video 1 -->
+<div class="slide light" data-slide="11">
+  <div class="slide-inner scrollable">
+    <div class="two-col">
+      <div class="col">
+        <h2 class="heading" style="font-size:clamp(28px,3.5vw,56px);">Video 1</h2>
+        <div class="subheading">Unboxing — Erste Reaktion</div>
+        <p class="body-text">Du öffnest dein feey Paket und reagierst auf die Pflanze. Zeig die feey Verpackung, das Auspackerlebnis und deine echte Reaktion. Dieser Moment soll Neugier wecken und die Qualität des feey Erlebnisses transportieren.</p>
+        <div class="section-green" style="margin-top:1em;">Spezifikationen</div>
+        <ul class="spec-list">
+          <li>Format: 9:16 (vertikal)</li>
+          <li>Dauer: 15–30 Sekunden</li>
+          <li>Natürliches Licht, bei dir zu Hause</li>
+          <li>feey Paket und Topf gut sichtbar</li>
+          <li>Audio: Originalton oder Voice-Over</li>
+        </ul>
+        <div class="section-green">Szenen & Ideen</div>
+        <ul class="idea-list">
+          <li>Du sitzt auf dem Sofa und öffnest das feey Paket</li>
+          <li>Close-up auf die Verpackung — zeig das handgeschriebene Kärtchen</li>
+          <li>Pflanze rausheben — Reaktion auf Grösse/Qualität</li>
+          <li>Pflanze im feey Topf auf den Tisch stellen und bewundern</li>
+        </ul>
+      </div>
+      <div class="col" style="display:flex; align-items:center; justify-content:center;">
+        <div class="phone-frame" data-video="Bildschirmaufnahme%202026-04-22%20um%2009.34.21.mov">
+          <video playsinline controls preload="metadata">
+            <source src="Bildschirmaufnahme%202026-04-22%20um%2009.34.21.mov">
+          </video>
+          <div class="video-placeholder" style="display:none;">
+            <div class="play-icon">&#9654;</div>
+            <div class="vp-text">Video nicht gefunden</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar green"></div>
+</div>
+
+<!-- SLIDE 12 — Video 2 -->
+<div class="slide light" data-slide="12">
+  <div class="slide-inner scrollable">
+    <div class="two-col">
+      <div class="col" style="flex:1.3;">
+        <h2 class="heading" style="font-size:clamp(28px,3.5vw,56px);">Video 2</h2>
+        <div class="subheading">Platzieren & Stylen</div>
+        <p class="body-text">Du suchst den perfekten Platz für deine neue Pflanze und arrangierst sie in deinem Zuhause. Zeig, wie eine Pflanze einen Raum transformiert — vorher/nachher Feeling. Die Pflanze als Interior-Upgrade.</p>
+        <div class="section-green" style="margin-top:1em;">Spezifikationen</div>
+        <ul class="spec-list">
+          <li>Format: 9:16 (vertikal)</li>
+          <li>Dauer: 15–30 Sekunden</li>
+          <li>Natürliches Licht, echte Wohnumgebung</li>
+          <li>feey Topf prominent sichtbar</li>
+          <li>Audio: Trendsound oder Voice-Over</li>
+        </ul>
+        <div class="section-green">Szenen & Ideen</div>
+        <ul class="idea-list">
+          <li>Pflanze an verschiedene Orte stellen — Regal, Fensterbrett, Sideboard — bis der perfekte Spot gefunden ist</li>
+          <li>Schnelle Cuts: leeres Regal → Pflanze drauf → der Raum sieht komplett anders aus</li>
+          <li>Pflanze neben andere Deko-Objekte stellen und das Arrangement anpassen</li>
+          <li>«Room Tour»-Style: Kamera schwenkt durch den Raum und bleibt an der Pflanze hängen</li>
+        </ul>
+      </div>
+      <div class="col" style="display:flex; align-items:center; justify-content:center;">
+        <div class="phone-frame" data-video="Bildschirmaufnahme%202026-04-22%20um%2009.32.35.mov">
+          <video playsinline controls preload="metadata">
+            <source src="Bildschirmaufnahme%202026-04-22%20um%2009.32.35.mov">
+          </video>
+          <div class="video-placeholder" style="display:none;">
+            <div class="play-icon">&#9654;</div>
+            <div class="vp-text">Video hier ablegen:<br><strong>Bildschirmaufnahme 2026-04-22 um 09.32.35.mov</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar green"></div>
+</div>
+
+<!-- SLIDE 13 — Video 3 -->
+<div class="slide light" data-slide="13">
+  <div class="slide-inner scrollable">
+    <div class="two-col">
+      <div class="col" style="flex:1.3;">
+        <h2 class="heading" style="font-size:clamp(28px,3.5vw,56px);">Video 3</h2>
+        <div class="subheading">Pflege-Routine</div>
+        <p class="body-text">Du zeigst, wie du deine Pflanze pflegst — Giessen, Blätter abstauben, Fingertest. Mach Pflanzenpflege nahbar und einfach. Zeig: Das kann jede*r. Kein Vorwissen nötig. Genau die feey Botschaft.</p>
+        <div class="section-green" style="margin-top:1em;">Spezifikationen</div>
+        <ul class="spec-list">
+          <li>Format: 9:16 (vertikal)</li>
+          <li>Dauer: 20–45 Sekunden</li>
+          <li>Natürliches Licht, ruhige Atmosphäre</li>
+          <li>Pflanze und feey Topf im Zentrum</li>
+          <li>Audio: ASMR-artig oder Voice-Over mit Tipps</li>
+        </ul>
+        <div class="section-green">Szenen & Ideen</div>
+        <ul class="idea-list">
+          <li>Fingertest zeigen: Finger in die Erde stecken → prüfen ob feucht → giessen oder nicht</li>
+          <li>Blätter sanft mit einem Tuch abwischen</li>
+          <li>Giessen mit einer schönen Giesskanne — Wasser fliesst in den Topf</li>
+          <li>Pflanze am Fenster drehen, damit alle Seiten Licht bekommen</li>
+          <li>feey Pflegespickzettel kurz ins Bild halten</li>
+        </ul>
+      </div>
+      <div class="col" style="display:flex; align-items:center; justify-content:center;">
+        <div class="phone-frame" data-video="Bildschirmaufnahme%202026-04-21%20um%2010.12.44.mov">
+          <video playsinline controls preload="metadata">
+            <source src="Bildschirmaufnahme%202026-04-21%20um%2010.12.44.mov">
+          </video>
+          <div class="video-placeholder" style="display:none;">
+            <div class="play-icon">&#9654;</div>
+            <div class="vp-text">Video hier ablegen:<br><strong>Bildschirmaufnahme 2026-04-21 um 10.12.44.mov</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar yellow"></div>
+</div>
+
+<!-- SLIDE 14 — Video 4 -->
+<div class="slide light" data-slide="14">
+  <div class="slide-inner scrollable">
+    <div class="two-col">
+      <div class="col" style="flex:1.3;">
+        <h2 class="heading" style="font-size:clamp(28px,3.5vw,56px);">Video 4</h2>
+        <div class="subheading">Talking — Was Pflanzen auslösen</div>
+        <p class="body-text">Du sprichst in die Kamera und erzählst, was die Pflanze in deinem Zuhause verändert hat. Emotional, persönlich, echt. Dieses Video ist für Mid-Funnel — es soll überzeugen und Vertrauen aufbauen. Zeig echte Begeisterung, keine Werbephrasen.</p>
+        <div class="section-green" style="margin-top:1em;">Spezifikationen</div>
+        <ul class="spec-list">
+          <li>Format: 9:16 (vertikal)</li>
+          <li>Dauer: 30–60 Sekunden</li>
+          <li>Natürliches Licht, Pflanze im Hintergrund oder in der Hand</li>
+          <li>Blick in die Kamera, natürliche Sprache</li>
+          <li>Audio: Deine Stimme, kein Hintergrund-Track nötig</li>
+        </ul>
+        <div class="section-green">Szenen & Ideen</div>
+        <ul class="idea-list">
+          <li>Erzähl, wie die Pflanze deinen Raum verändert hat — was ist anders?</li>
+          <li>Zeig die Pflanze, während du sprichst — halte sie oder stell dich daneben</li>
+          <li>Starte mit einem Hook: «Ich dachte immer, ich kann keine Pflanzen halten...»</li>
+          <li>Ende mit: Was du Freund*innen über feey erzählen würdest</li>
+        </ul>
+        <div class="section-green">Talking Points</div>
+        <ul class="talk-list">
+          <li>«Ich bin kein Pflanzenprofi — aber diese hier lebt tatsächlich noch!»</li>
+          <li>«Mein Zuhause fühlt sich so viel lebendiger an seit diese Pflanze hier steht.»</li>
+          <li>«Die Pflegeanleitung von feey macht es echt einfach — auch für mich.»</li>
+          <li>«Schweizer Brand, echte Qualität — die Pflanzen kommen frisch umgetopft und gesund an.»</li>
+          <li>«Ich hätte nicht gedacht, dass eine Pflanze so viel auslösen kann.»</li>
+        </ul>
+      </div>
+      <div class="col" style="display:flex; align-items:center; justify-content:center;">
+        <div class="phone-frame" data-video="Bildschirmaufnahme%202026-04-22%20um%2009.43.38.mov">
+          <video playsinline controls preload="metadata">
+            <source src="Bildschirmaufnahme%202026-04-22%20um%2009.43.38.mov">
+          </video>
+          <div class="video-placeholder" style="display:none;">
+            <div class="play-icon">&#9654;</div>
+            <div class="vp-text">Video hier ablegen:<br><strong>Bildschirmaufnahme 2026-04-22 um 09.43.38.mov</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="feey-logo"><img src="feey_Schriftzug.png" alt="feey"></div>
+  <div class="confidential">Confidential</div>
+  <div class="accent-bar green"></div>
+</div>
+
+</div><!-- /presentation -->
+
+<!-- Navigation -->
+<button class="nav-arrow prev" id="prevBtn" aria-label="Previous slide">&#8249;</button>
+<button class="nav-arrow next" id="nextBtn" aria-label="Next slide">&#8250;</button>
+<div class="slide-counter" id="slideCounter">1 / 14</div>
+<div class="progress-bar" id="progressBar"></div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  function goTo(index) {
+    if (index < 0 || index >= total) return;
+    slides[current].classList.remove('active');
+    current = index;
+    slides[current].classList.add('active');
+    document.getElementById('slideCounter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('progressBar').style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+  });
+
+  // Touch/swipe support
+  let touchStartX = 0;
+  let touchStartY = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    const dy = e.changedTouches[0].screenY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) next(); else prev();
+    }
+  }, { passive: true });
+
+  // Video fallback: show placeholder if video fails to load
+  document.querySelectorAll('.phone-frame').forEach(function(frame) {
+    var video = frame.querySelector('video');
+    var placeholder = frame.querySelector('.video-placeholder');
+    if (!video || !placeholder) return;
+    video.addEventListener('error', function() {
+      video.style.display = 'none';
+      placeholder.style.display = 'flex';
+    });
+    // Also check source error
+    var source = video.querySelector('source');
+    if (source) {
+      source.addEventListener('error', function() {
+        video.style.display = 'none';
+        placeholder.style.display = 'flex';
+      });
+    }
+    // Timeout fallback: if video hasn't loaded metadata in 2s, show placeholder
+    setTimeout(function() {
+      if (video.readyState === 0 && video.networkState !== 2) {
+        video.style.display = 'none';
+        placeholder.style.display = 'flex';
+      }
+    }, 2000);
+  });
+
+  // Initialize progress bar
+  document.getElementById('progressBar').style.width = (1 / total * 100) + '%';
+})();
+</script>
+</body>
+</html>
